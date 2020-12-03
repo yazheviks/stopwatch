@@ -1,0 +1,34 @@
+<div class="timer">
+  <div class="timer__clock">
+    <span>{{ state.hour | number: '2.0' }}</span>
+    :
+    <span>{{ state.minute | number: '2.0' }}</span>
+    :
+    <span>{{ state.second | number: '2.0' }}</span>
+  </div>
+
+  <div class="timer__buttons">
+    <button
+      class="timer__btn"
+      (click)="toggleWork()"
+    >
+      {{ isStarted ? 'Stop' : 'Start'}}
+    </button>
+
+    <button
+      class="timer__btn"
+      [class.timer__btn--disabled]="!isStarted"
+      (click)="wait($event)"
+    >
+      Wait
+    </button>
+
+    <button
+      class="timer__btn"
+      [class.timer__btn--disabled]="!state.time"
+      (click)="reset()"
+    >
+      Reset
+    </button>
+  </div>
+</div>
