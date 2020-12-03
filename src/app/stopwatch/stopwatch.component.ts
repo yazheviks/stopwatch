@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { timer, fromEvent, Subscription } from 'rxjs';
-import { timeInterval } from 'rxjs/operators';
+import { timer, fromEvent, Subscription, of } from 'rxjs';
+import { delay, timeInterval } from 'rxjs/operators';
 
 @Component({
   selector: 'app-stopwatch',
@@ -18,6 +18,7 @@ export class StopwatchComponent  {
   state = { ...this.initialState };
   doubleClickDifference = 300;
   a: Subscription = new Subscription;
+  result: object | null = null;
 
   renderNewTime(time: number) {
     switch(this.isStarted) {
@@ -45,6 +46,14 @@ export class StopwatchComponent  {
 
   finish(): void {
     this.a.unsubscribe();
+    this.result = { ...this.state };
+
+    of(true)
+      .pipe(delay(3000))
+      .subscribe(() => {
+        this.result = null;
+      });
+
     this.reset();
   }
 

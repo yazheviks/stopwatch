@@ -31,4 +31,10 @@
       Reset
     </button>
   </div>
+
+  <div *ngIf="result" class="timer__result">
+    <p>
+      Your run took {{ result.hour | number: '2.0' }}:{{ result.minute | number: '2.0' }}:{{ result.second | number: '2.0' }}
+    </p>
+  </div>
 </div>
