@@ -18,7 +18,7 @@ export class StopwatchComponent  {
   state = { ...this.initialState };
   doubleClickDifference = 300;
   a: Subscription = new Subscription;
-  result: object | null = null;
+  result: any = null;
 
   renderNewTime(time: number) {
     switch(this.isStarted) {
