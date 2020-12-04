@@ -9,7 +9,8 @@ Simple Stopwatch written with Angular
 This stopwatch can:
 - record the time (on Start button), 
 - pause recording (doubleclick on Wait button),
-- reset time to record from the beginning again (Reset button).
+- reset time to record from the beginning again (Reset button),
+- after stopping, you are given a message about how long the running took (on Stop button).
 
 ## Local deployment
 
