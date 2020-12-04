@@ -1,24 +1,32 @@
-import { Component } from '@angular/core';
-import { timer, fromEvent, Subscription, of } from 'rxjs';
-import { delay, timeInterval } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { timer, Subscription, of, Subject } from 'rxjs';
+import { delay, timeInterval, filter } from 'rxjs/operators';
+import { timeState, TimeState } from '../../helpers/TimeState';
 
 @Component({
   selector: 'app-stopwatch',
   templateUrl: './stopwatch.component.html',
   styleUrls: ['./stopwatch.component.scss']
 })
-export class StopwatchComponent  {
+export class StopwatchComponent implements OnInit  {
   isStarted:boolean = false;
-  initialState = {
-    time: 0,
-    hour: 0,
-    minute: 0,
-    second: 0,
-  };
-  state = { ...this.initialState };
+  state = { ...timeState };
   doubleClickDifference = 300;
-  a: Subscription = new Subscription;
-  result: any = null;
+  timeRunning: Subscription = new Subscription;
+  result: TimeState | null = null;
+  $click = new Subject();
+
+  ngOnInit() {
+    this.$click
+      .pipe(
+        timeInterval(),
+        filter(interval => interval.interval < this.doubleClickDifference)
+      )
+      .subscribe(() => {
+        this.isStarted = false;
+        this.timeRunning.unsubscribe();
+      })
+  }
 
   renderNewTime(time: number) {
     switch(this.isStarted) {
@@ -37,7 +45,7 @@ export class StopwatchComponent  {
   }
 
   start(): void {
-    this.a = timer(1000, 1000).subscribe(() => {
+    this.timeRunning = timer(1000, 1000).subscribe(() => {
       this.state.time++;
 
       this.renderNewTime(this.state.time);
@@ -45,7 +53,7 @@ export class StopwatchComponent  {
   }
 
   finish(): void {
-    this.a.unsubscribe();
+    this.timeRunning.unsubscribe();
     this.result = { ...this.state };
 
     of(true)
@@ -68,19 +76,12 @@ export class StopwatchComponent  {
     this.start();
   }
 
-  wait(event: any): void {
+  wait(): void {
     if (!this.isStarted) {
       return;
     }
 
-    fromEvent(event.target, 'click')
-      .pipe(timeInterval())
-      .subscribe(iteration => {
-        if (iteration.interval < this.doubleClickDifference) {
-          this.isStarted = false;
-          this.a.unsubscribe();
-        }
-    });
+    this.$click.next();
   }
 
   reset(): void {
@@ -88,6 +89,6 @@ export class StopwatchComponent  {
       return;
     }
 
-    this.state = { ...this.initialState };
+    this.state = { ...timeState };
   }
 }
